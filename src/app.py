@@ -40,11 +40,22 @@ def publish(id):
     finally:
         print("Se ha completado la tarea")
 
-while True:
-    now = datetime.now() - timedelta(hours=0)
-    if now.hour == 20 and now.minute == 9:
-        #publish(random.randint(0,100))
-        publish(1)
-        time.sleep(60)
-    time.sleep(1)
+def main():
+    while True:
+        now = datetime.now() - timedelta(hours=0)
+        if now.hour == 20 and now.minute == 9:
+            publish(random.randint(0,100))
+            publish(1)
+            time.sleep(60)
+        time.sleep(1)
 
+def publish_test():
+    try:
+        client = tweepy.Client(bearer_token,api_key,api_secret,access_token,access_token_secret) 
+        api = authentication()
+        client.create_tweet(text=f'This is a tweer test')
+    except tweepy.TweepyException as e:
+        print(f"Error: {e}")
+    finally:
+        print("Se ha completado la tarea")
+publish_test()
