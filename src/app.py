@@ -7,7 +7,7 @@ import time
 from datetime import datetime, timedelta
 from PIL import Image
 
-dotenv_path = join(dirname(__file__), '../.env')
+dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 dir= 'images/'
 
@@ -15,7 +15,7 @@ dir= 'images/'
 api_key = os.getenv('API_KEY')
 api_secret = os.getenv('API_SECRET')
 access_token = os.getenv('ACCESS_TOKEN')
-access_token_secret = secret=os.getenv('ACCESS_TOKEN_SECRET')
+access_token_secret =os.getenv('ACCESS_TOKEN_SECRET')
 bearer_token=os.getenv('BEARER_TOKEN')
 
 def loadImages(folder):
@@ -38,10 +38,10 @@ def publish(content):
     try:
         client = tweepy.Client(bearer_token,api_key,api_secret,access_token,access_token_secret) 
         api = authentication()
-        image_path = content[0]
+        image_path = f'{content[0]}'
         media = api.media_upload(image_path)
         media_id = media.media_id_string
-        client.create_tweet(text=f'image {id}/100 \n\n Link: {content[1]}',media_ids=[media_id])
+        client.create_tweet(text=f'image {content[4]}/{content[3]} | Cap {content[2]} \n\n Link: {content[1]}',media_ids=[media_id])
        
     except tweepy.TweepyException as e:
         print(f"Error: {e}")
@@ -57,16 +57,18 @@ def chooseContent():
     choosed_folder = random.randint(1,length_folder)
     length_images = len(loadImages(choosed_folder))
     choosed_image = random.randint(1,length_images)
-    images = f"{dir}cap_{choosed_folder}/image ({choosed_image})"
+    images = f"{dir}cap_{choosed_folder}/image ({choosed_image}).jpg"
     link = f"https://www.webtoons.com/es/canvas/contrast-resistance/tren-y-resistencia/viewer?title_no=516436&episode_no={choosed_folder}"
-    return [images,link]
+    return [images,link,choosed_folder,length_images,choosed_image]
 
 
 def main():
     while True:
-        now = datetime.now() - timedelta(hours=0)
-        if now.hour == 20 and now.minute == 9:
-            publish(chooseContent())
+        now = datetime.now() - timedelta(hours=3)
+        if now.hour == 9 and now.minute == 12:
+            content = chooseContent()
+            publish(content)
+            print(content)
             time.sleep(60)
         time.sleep(1)
 
@@ -80,4 +82,4 @@ def publish_test():
     finally:
         print("Se ha completado la tarea")
 #publish_test()
-
+main()
